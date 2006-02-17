@@ -1,0 +1,75 @@
+=pod
+
+=head1 NAME
+
+CGI::Session::AUS - Session management for Schema::RDBMS::AUS
+
+=head1 SYNOPSIS
+
+  use CGI::Session::AUS;
+  $ENV{AUS_DB_DSN} = 'DBI:Pg:';
+  $session = new CGI::Session::AUS();
+  $session->login($user, $password);
+  $session->param('foo');
+  etc..
+
+=head1 DESCRIPTION
+
+CGI::Session::AUS is a subclass of L<CGI::Session|CGI::Session> that
+provides access to sessions being used under
+L<Schema::RDBMS::AUS|Schema::RDBMS::AUS>. It automatically configures
+the session object to use AUS's driver, and also provides access to the
+extra information that is stored on a session in the AUS schema.
+
+=head1 USAGE
+
+Create a CGI::Session::AUS object the same way as you would create 
+a CGI::Session object; just always make sure the C<driver> is specified
+as "C<aus>". By default, CGI::Session::AUS will use the L<Storable|Storable>
+serializer to save information to the database. For full details on the
+CGI::Session interface, see L<CGI::Session>. The extensions that 
+CGI::Session::AUS provides are described below:
+
+=head1 METADATA METHODS
+
+The following methods can be used to obtain extra information about the
+session:
+
+=over
+
+=item user
+
+Returns a L<Schema::RDBMS::AUS::User|Schema::RDBMS::AUS::User> object if
+this session is logged in, C<undef> otherwise.
+
+When a session is flushed, if there is an associated user, that user is
+always saved as well. B<However>, a session is only flushed if it has
+changed. If you have only changed the user and have not changed the
+session, you will have to save the user yourself!
+
+=item created
+
+Returns the time that this session was created. The format of this time
+will depend on your database engine. Future versions I<may> convert this
+to epoch for you (I'm still debating this).
+
+=item time_last
+
+Returns the last time that this session was used.
+
+=head1 AUTHOR
+
+Tyler "Crackerjack" MacDonald <japh@crackerjack.net>
+
+=head1 LICENSE
+
+Copyright 2006 Tyler "Crackerjack" MacDonald <japh@crackerjack.net>
+
+This is free software; You may distribute it under the same terms as perl
+itself.
+
+=head1 SEE ALSO
+
+L<CGI::Session>, L<Schema::RDBMS::AUS>, L<Schema::RDBMS::AUS::User>.
+
+=cut
