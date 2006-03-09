@@ -8,7 +8,8 @@ use DBI;
 use DBIx::Transaction;
 use DBIx::Migration::Directories::Base;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
+our $SCHEMA_VERSION = '0.01';
 
 our @optmap = (
     ['AUS_DB_DSN',  'DBI_DSN'],
@@ -70,6 +71,10 @@ Schema::RDBMS::AUS - Authentication, Users and Sessions in an SQL schema
 
 =head1 DESCRIPTION
 
+B<Note:> I<This is an alpha release. The interface is somewhat stable and
+well-tested, but other changes may come as I work in implementing this on
+my website.>
+
 The Schema::RDBMS::AUS distribution provides a complete transactional, mid-level
 interface to users, groups, and sessions, including:
 
@@ -93,12 +98,41 @@ other mod_perl2 modules, CGI scripts, or even PHP/Ruby/Python.
 
 =head1 INSTALLING THE DATABASE SCHEMA
 
+Currently, PostgreSQL (7.4 and above) and MySQL (5.0 and above) are supported.
+
 To install the database schema, use the L<migrate-database-schema|migrate-database-schema>
 utility, supplied by the L<DBIx::Migration::Directories|DBIx::Migration::Directories>
 distribution. For example, the following line would install the schema into
 the MySQL database 'joe':
 
-  $ migrate-database-schema --dsn DBI:mysql:dbname=joe --verbose Schema::RDBMS::AUS
+  $ migrate-database-schema --dsn DBI:mysql:database=joe --verbose Schema::RDBMS::AUS
+
+B<NOTE:> For both the PostgreSQL and MySQL schemas, it's best to install
+them as the database superuser.
+
+=head2 PostgreSQL
+
+The entire PostgreSQL database schema can be installed by a regular database
+user so long as the C<plpgsql> language is already installed in the database
+you wish to use. If C<plpgsql> is I<not> installed, Schema::RDBMS::AUS will
+attempt to install it for you. This requires database administrator
+priviliges.
+
+=head2 MySQL
+
+With MySQL, you're really better off just installing the entire schema as
+root. The permissions system for C<CREATE VIEW> and C<CREATE TRIGGER>
+in MySQL are a bit screwed up, and if your user B<doesn't> have permissions
+to install these objects, the situation is even worse:
+B<MySQL auto-commits a transaction after each CREATE TABLE>, meaning that
+a half-finished, failed schema installation can not be backed out properly.
+
+I've tried all sorts of crazy GRANT statements and have not yet successfully
+installed this schema as an unpriviliged user and have concluded that
+MySQL is pretty much braindead.
+
+Once the schema is installed, it can be accessed with a regular user with
+no problems.
 
 =head1 MANAGING SESSIONS
 
@@ -164,8 +198,8 @@ If not, sbdh will die() with a useful error message.
 =item Mischa Sandberg <mischa.sandberg@telus.net>
 
 Mischa has taught me quite a bit about Postgres in general, and wrote
-the prototypical versions of the triggers and views that are used to
-support heiarchial user/group membership.
+the triggers and views that are used to support heiarchial user/group
+membership.
 
 =back
 

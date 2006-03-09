@@ -1,6 +1,11 @@
 Revision history for Perl extension Schema::RDBMS::AUS.
 
+0.02  Thu Mar  9 10:13:00 2006
+    - Misc. changes, most notable is using JSON as the default
+      session serializer. JSON is YAML is understood by many
+      languages.
+
+
 0.01  Mon Jan  2 14:00:34 2006
 	- original version; created by h2xs 1.23 with options
 		-AXP -b 5.6.0 -n Schema::RDBMS::AUS
-

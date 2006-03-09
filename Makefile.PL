@@ -24,7 +24,7 @@
       chdir $cwd or die "Cannot chdir() back to $cwd: $!";
     }
     eval "use Module::Build::Compat 0.02; 1" or die $@;
-    use lib '/usr/local/share/perl/5.8.7';
+    use lib '/usr/local/share/perl/5.8.8';
     Module::Build::Compat->run_build_pl(args => \@ARGV);
     require DBIx::Migration::Directories::Build;
     Module::Build::Compat->write_makefile(build_class => 'DBIx::Migration::Directories::Build');

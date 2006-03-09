@@ -47,6 +47,7 @@ sub login {
     
     if(my $user = eval { Schema::RDBMS::AUS::User->login($name, $pass, %o) }) {
         $self->{_user} = $user;
+        $self->_set_status($self->STATUS_MODIFIED);
         $self->flush();
         return $user;
     } else {
@@ -62,6 +63,7 @@ sub logout {
     
     if(my $user = $self->{_user}) {
         $user->{_dbh}->transaction(sub {
+            $user->refresh;
             $user->log('logout', %log_opts);
             $user->save;
         });
@@ -117,10 +119,6 @@ sub flush {
         $self->_unset_status($self->STATUS_NEW, $self->STATUS_MODIFIED);
     }
     
-    if($self->{_user}) {
-        $self->{_user}->save;
-    }
-    
     return 1;
 }
 
@@ -131,7 +129,7 @@ sub _get_meta {
 sub load {
     my $class = shift;
     @_ = (undef, undef, undef) if !@_;
-    $_[0] = "d:aus;s:storable" unless defined $_[0] || @_ < 2;
+    $_[0] = "d:aus;s:json" unless defined $_[0] || @_ < 2;
     $_[1] = $ENV{AUS_SESSION_ID} if $ENV{AUS_SESSION_ID} && !defined $_[1];
     if(my $self = $class->SUPER::load(@_)) {
         my $meta = $self->_driver->retrieve_meta($self->id);

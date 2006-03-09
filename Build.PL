@@ -10,15 +10,17 @@ our %opts = (
     module_name         =>  'Schema::RDBMS::AUS',
     license             =>  'perl',
     requires            =>  {
-        'DBIx::Migration::Directories'  =>  '0.01',
+        'DBIx::Migration::Directories'  =>  '0.05',
         'Class::Driver'                 =>  '0.002',
         'DBIx::Transaction'             =>  '0.005',
-        'CGI::Session'                  =>  '4.03',
+        'CGI::Session'                  =>  '4.06',
+        'JSON::Syck'                    =>  '0.07',
     },
     build_requires      =>  {
-        'Test::CPANpm'                  =>  '0.008',
-        'Module::Build'                 =>  '0.27_03',
-        'Test::Exception'               =>  '0.21',
+        'Test::CPANpm'                          =>  '0.008',
+        'Module::Build'                         =>  '0.27_03',
+        'Test::Exception'                       =>  '0.20',
+        'DBIx::Migration::Directories::Build'   =>  '0',
     },
     create_makefile_pl  =>  'passthrough',
 );
@@ -28,9 +30,17 @@ eval { require DBIx::Migration::Directories::Build; };
 my $build;
 
 if($@) {
-    warn "DBIx::Migration::Directories::Build is required to build this module!";
-    $opts{requires}{'DBIx::Migration::Directories::Build'} = 0;
     $build = Module::Build->new(%opts, installdirs => {});
+    print <<"EOT";
+*** DBIx::Migration::Directories::Build is required to build this module!
+
+    This is supplied by the DBIx::Migration::Directories package.
+    Once you have installed this package, you may have to run "Build.PL"
+    again. If you are installing from CPAN, you may need to quit and
+    re-enter your CPAN shell.
+        
+EOT
+    $build->prompt("Press enter to continue", ".");
 } else {
     $build = DBIx::Migration::Directories::Build->new(%opts);
 }
