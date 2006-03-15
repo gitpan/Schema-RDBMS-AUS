@@ -1,6 +1,6 @@
 ---
 name: Schema-RDBMS-AUS
-version: 0.02
+version: 0.03
 author:
   - 'Tyler "Crackerjack" MacDonald <japh@crackerjack.net>'
 abstract: 'Authentication, Users and Sessions in an SQL schema'
@@ -8,9 +8,9 @@ license: perl
 resources:
   license: http://dev.perl.org/licenses/
 requires:
-  CGI::Session: 4.06
+  CGI::Session: 4.07
   Class::Driver: 0.002
-  DBIx::Migration::Directories: 0.01
+  DBIx::Migration::Directories: 0.05
   DBIx::Transaction: 0.005
   JSON::Syck: 0.07
 build_requires:
@@ -27,7 +27,7 @@ provides:
     file: lib/CGI/Session/Driver/aus/Pg.pm
   Schema::RDBMS::AUS:
     file: lib/Schema/RDBMS/AUS.pm
-    version: 0.02
+    version: 0.03
   Schema::RDBMS::AUS::Crypt::MD5:
     file: lib/Schema/RDBMS/AUS/Crypt/MD5.pm
   Schema::RDBMS::AUS::Crypt::None:

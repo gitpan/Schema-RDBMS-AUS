@@ -1,5 +1,12 @@
 Revision history for Perl extension Schema::RDBMS::AUS.
 
+0.03  ?
+    - Switched to using YAML instead of JSON, since YAML can store
+      reference types natively and there *is* a YAML parser available
+      for JavaScript.
+    - Fleshed out the documentation for CGI::Session::AUS. Thanks to
+      Mark Stosberg for pointing this out. :-)
+
 0.02  Thu Mar  9 10:13:00 2006
     - Misc. changes, most notable is using JSON as the default
       session serializer. JSON is YAML is understood by many

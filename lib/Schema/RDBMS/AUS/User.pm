@@ -20,7 +20,7 @@ return 1;
 
 sub login {
     my($class, $user, $password, %login_info) = @_;
-    %login_info = (name => $user, password => $password, %login_info);
+    %login_info = (%login_info, name => $user, password => $password);
     my $self;
     if($self = eval { $class->_login(%login_info) }) {
         my $txn = delete($login_info{_post_login}) || sub { return shift };

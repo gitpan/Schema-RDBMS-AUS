@@ -30,6 +30,34 @@ serializer to save information to the database. For full details on the
 CGI::Session interface, see L<CGI::Session>. The extensions that 
 CGI::Session::AUS provides are described below:
 
+=head1 USER METHODS
+
+The following methods help tie sessions to users (also see the "user"
+method in L</METADATA METHODS> below):
+
+=over
+
+=item login($user, $pass, %log_options)
+
+Attempt to log a user in with the given username and password.
+%log_options is a hash of additional options to pass to
+L<Schema::RDBMS::AUS::User|Schema::RDBMS::AUS::User>'s
+L<login|Schema::RDBMS::AUS::User/login> method. Some options (ip, etc) will
+be automatically set for you by C<log_opts>, documented below.
+Any additional parameters passed in will end up in the user's
+authentication log.
+
+Logging a user in implicitly flushes the session to the database.
+
+=item logout(%log_options)
+
+If this session has a logged in user, log that user out and disassociate
+them from the session.
+
+Logging a user out implicitly flushes the session to the database.
+
+=back
+
 =head1 METADATA METHODS
 
 The following methods can be used to obtain extra information about the
@@ -56,6 +84,122 @@ to epoch for you (I'm still debating this).
 =item time_last
 
 Returns the last time that this session was used.
+
+=back
+
+=head1 UTILITY METHODS
+
+These methods are used internally by C<CGI::Session::AUS>, but you 
+might find them nifty too:
+
+=over
+
+=item remote_ip
+
+Returns the remote IP address detected for this session. This comes from
+one of two places:
+
+=over
+
+=item The REMOTE_ADDR environment variable
+
+This is set in most CGI and mod_perl environments and is considered the
+most accurate.
+
+=item The _SESSION_REMOTE_ADDR session parameter
+
+L<CGI::Session|CGI::Session> does it's own IP detection and puts the
+detected remote IP here. If REMOTE_ADDR is not set, we will use this
+as the remote IP.
+
+=back
+
+If neither of these sources are filled in, remote_ip returns C<undef>.
+
+=item log_opts
+
+Returns a hash containing options suitable to pass to
+L<Schema::RDBMS::AUS::User|Schema::RDBMS::AUS::User>'s C<login> and
+C<logout> methods, to provide information to write in the authentication
+log. The following key/value pairs can be returned:
+
+=over
+
+=item ip
+
+The user's remote IP address, as returned by C<remote_ip> (documented above).
+
+=item session_id
+
+This session's unique ID string.
+
+=item name
+
+If we are logged in, the logged in user's name.
+
+=item id
+
+If we are logged in, the logged in user's ID.
+
+=item _dbh
+
+Our database handle, so that it can be shared with the user object.
+
+=back
+
+=back
+
+=head1 OVERRIDDEN METHODS
+
+The whole purpose of CGI::Session::AUS is to integrate
+L<Schema::RDBMS::AUS::User|Schema::RDBMS::AUS::User> with
+L<CGI::Session|CGI::Session>. In order to facilitate this,
+the following CGI::Session methods have been overridden in
+CGI::Session::AUS:
+
+=over
+
+=item flush
+
+=over
+
+=item *
+
+When a CGI::Session::AUS session is flushed, we store some
+meta-data about the session in the AUS schema as well. 
+
+=item *
+
+When a deleted session is flushed, we delete the metadata from
+the session object along with the regular session data.
+
+=back
+
+=item load
+
+=over
+
+=item *
+
+If a session ID is not specified, we look in the AUS_SESSION_ID
+environment variable for a default value. This variable is set by
+higher-level handlers like L<Apache2::AUS|Apache2::AUS>.
+
+=item *
+
+We use L<CGI::Session::Serialize::yaml|CGI::Session::Serialize::yaml>
+as our default serializer to encourage compatibility with other programming
+languages.
+
+=item *
+
+Whenever a session is loaded, we load it's metadata (including a
+L<Schema::RDBMS::AUS::User|Schema::RDBMS::AUS::User> object if the session
+is logged in) along with it.
+
+=back
+
+=back
 
 =head1 AUTHOR
 

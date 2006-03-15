@@ -6,6 +6,7 @@ lib/CGI/Session/AUS.pod
 lib/CGI/Session/Driver/aus.pm
 lib/CGI/Session/Driver/aus/Pg.pm
 lib/Schema/RDBMS/AUS.pm
+lib/Schema/RDBMS/AUS.pod
 lib/Schema/RDBMS/AUS/Crypt/MD5.pm
 lib/Schema/RDBMS/AUS/Crypt/None.pm
 lib/Schema/RDBMS/AUS/Crypt/SHA1.pm

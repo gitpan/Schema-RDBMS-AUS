@@ -13,7 +13,7 @@ our %opts = (
         'DBIx::Migration::Directories'  =>  '0.05',
         'Class::Driver'                 =>  '0.002',
         'DBIx::Transaction'             =>  '0.005',
-        'CGI::Session'                  =>  '4.06',
+        'CGI::Session'                  =>  '4.07',
         'JSON::Syck'                    =>  '0.07',
     },
     build_requires      =>  {

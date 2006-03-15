@@ -19,26 +19,41 @@ if(!@CGI::Session::Serialize::storable::ISA) {
 
 return 1;
 
+# Utility methods
+
+sub remote_ip {
+    my $self = shift;
+    my $ip;
+    
+    if($ENV{REMOTE_ADDR}) {
+        $ip = $ENV{REMOTE_ADDR};
+    } elsif($self->param('_SESSION_REMOTE_ADDR')) {
+        $ip = $self->param('_SESSION_REMOTE_ADDR');
+    }
+    
+    return $ip;
+}
+
 sub log_opts {
     my $self = shift;
     my %log_opts;
     
-    if($self->param('ip')) {
-        $log_opts{ip} = $self->param('ip');
-    } elsif($ENV{REMOTE_ADDR}) {
-        $log_opts{ip} = $ENV{REMOTE_ADDR};
-    } elsif($self->param('_SESSION_REMOTE_ADDR')) {
-        $log_opts{ip} = $ENV{SESSION_REMOTE_ADDR};
+    if(defined(my $ip = $self->remote_ip)) {
+        $log_opts{ip} = $ip;
     }
     
     $log_opts{session_id} = $self->id;
     $log_opts{_dbh} = $self->_driver->{Handle} unless exists $log_opts{_dbh};
-    if(my $user = $self->{_user}) {
+    
+    if(my $user = $self->user) {
         $log_opts{name} = $user->{name} unless exists $log_opts{name};
         $log_opts{id} = $user->{id} unless exists $log_opts{id};
     }
+    
     return %log_opts;
 }
+
+# User methods
 
 sub login {
     my($self, $name, $pass, %o) = @_;
@@ -74,6 +89,8 @@ sub logout {
     return 1;
 }
 
+# Overriden methods
+
 sub flush {
     my $self = shift;
 
@@ -85,6 +102,8 @@ sub flush {
         $self->_test_status($self->STATUS_DELETED)
     ) {
         $self->{_DATA} = {};
+        delete $self->{_user};
+        delete $self->{_session_meta};
         return $self->_unset_status($self->STATUS_NEW, $self->STATUS_DELETED);
     }
 
@@ -99,6 +118,8 @@ sub flush {
         
         $self->{_DATA} = {};    # <-- removing all the data, making sure
                                 # it won't be accessible after flush()
+        delete $self->{_user};
+        delete $self->{_session_meta};
         return $self->_unset_status($self->STATUS_DELETED);
     }
 
@@ -122,14 +143,10 @@ sub flush {
     return 1;
 }
 
-sub _get_meta {
-    my $self = shift;
-}
-
 sub load {
     my $class = shift;
     @_ = (undef, undef, undef) if !@_;
-    $_[0] = "d:aus;s:json" unless defined $_[0] || @_ < 2;
+    $_[0] = "d:aus;s:yaml" unless defined $_[0] || @_ < 2;
     $_[1] = $ENV{AUS_SESSION_ID} if $ENV{AUS_SESSION_ID} && !defined $_[1];
     if(my $self = $class->SUPER::load(@_)) {
         my $meta = $self->_driver->retrieve_meta($self->id);
@@ -142,6 +159,8 @@ sub load {
         return $self;
     }
 }
+
+# Metadata methods
 
 sub user {
     my $self = shift;
