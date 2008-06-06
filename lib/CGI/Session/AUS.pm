@@ -8,7 +8,8 @@ use CGI;
 use CGI::Session;
 use Schema::RDBMS::AUS::User;
 use CGI::Session::Driver::aus;
-use CGI::Session::Serialize::storable;
+use CGI::Session::ID::md5;
+use CGI::Session::Serialize::yaml;
 use base q(CGI::Session);
 
 # workaround CGI::Session::Serialize::storable bug in 4.03
@@ -146,7 +147,7 @@ sub flush {
 sub load {
     my $class = shift;
     @_ = (undef, undef, undef) if !@_;
-    $_[0] = "d:aus;s:yaml" unless defined $_[0] || @_ < 2;
+    $_[0] = "d:aus;s:yaml;i:md5" unless defined $_[0] || @_ < 2;
     $_[1] = $ENV{AUS_SESSION_ID} if $ENV{AUS_SESSION_ID} && !defined $_[1];
     if(my $self = $class->SUPER::load(@_)) {
         my $meta = $self->_driver->retrieve_meta($self->id);

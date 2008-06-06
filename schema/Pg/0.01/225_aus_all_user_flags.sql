@@ -11,7 +11,7 @@ AS
                     (CASE WHEN enabled THEN '1' ELSE '0' END)
                 ),
                 6
-            )
+            )::int
             > 0
             THEN true ELSE false
         END

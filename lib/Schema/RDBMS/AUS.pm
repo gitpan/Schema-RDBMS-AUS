@@ -8,7 +8,7 @@ use DBI;
 use DBIx::Transaction;
 use DBIx::Migration::Directories::Base;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 our $SCHEMA_VERSION = '0.01';
 
 our @optmap = (

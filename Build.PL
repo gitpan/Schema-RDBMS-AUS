@@ -10,14 +10,13 @@ our %opts = (
     module_name         =>  'Schema::RDBMS::AUS',
     license             =>  'perl',
     requires            =>  {
-        'DBIx::Migration::Directories'  =>  '0.05',
-        'Class::Driver'                 =>  '0.002',
+        'DBIx::Migration::Directories'  =>  '0.07',
         'DBIx::Transaction'             =>  '0.005',
         'CGI::Session'                  =>  '4.07',
+        'CGI::Session::Serialize::yaml' =>  '0',
         'JSON::Syck'                    =>  '0.07',
     },
     build_requires      =>  {
-        'Test::CPANpm'                          =>  '0.008',
         'Module::Build'                         =>  '0.27_03',
         'Test::Exception'                       =>  '0.20',
         'DBIx::Migration::Directories::Build'   =>  '0',

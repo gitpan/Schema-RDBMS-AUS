@@ -5,9 +5,7 @@ package Schema::RDBMS::AUS::User;
 use strict;
 use warnings;
 use Carp qw(croak);
-use Class::Driver;
 use DBIx::Transaction;
-use base q(Class::Driver);
 use URI;
 use URI::QueryParam;
 use Schema::RDBMS::AUS;
@@ -224,7 +222,7 @@ sub default_password_crypt { return "SHA1"; }
 # driver constructor
 
 sub driver_new {
-    my($class, %args) = @_;
+    my($class, $driver, %args) = @_;
     
     $args{_flags} ||= {};
     $args{_permissions} ||= {};
@@ -274,7 +272,7 @@ sub _new {
     $args{_validate_password} = sub { return length $_[0]; }
         unless $args{_validate_password};
 
-    return $class->driver_load($args{_dbh_driver}, %args);
+    return $class->driver_new($args{_dbh_driver}, %args);
 }
 
 sub _use_crypt_class {

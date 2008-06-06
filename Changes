@@ -1,5 +1,14 @@
 Revision history for Perl extension Schema::RDBMS::AUS.
 
+0.04  Thu Jun  5 21:23:00 2008
+    - Updated to not use Class::Driver
+    - Force dependency on CGI::Session::Serialize::yaml,
+      since it's no longer a part of the bleed CGI::Session
+      (even though it should be!)
+    - Pg schema is still v.0.01, because Pg's definition of what
+      is allowed has changed. Hopefully it won't change again. :-(
+      (PG_BYTEA & typecasting strings to ints...)
+
 0.03  ?
     - Switched to using YAML instead of JSON, since YAML can store
       reference types natively and there *is* a YAML parser available

@@ -5,8 +5,7 @@ package CGI::Session::Driver::aus;
 use strict;
 use warnings;
 use CGI::Session::Driver::DBI;
-use Class::Driver;
-use base qw(Class::Driver CGI::Session::Driver::DBI);
+use base qw(CGI::Session::Driver::DBI);
 use Schema::RDBMS::AUS;
 use Carp qw(croak);
 
@@ -49,11 +48,6 @@ sub new {
     $args->{_aus_driver} = $args->{Handle}->{Driver}->{Name}
         unless exists $args->{_aus_driver};
         
-    return $class->driver_load($args->{_aus_driver}, $args);
-}
-
-sub driver_new {
-    my($class, $args) = @_;
     return $class->SUPER::new($args);
 }
 

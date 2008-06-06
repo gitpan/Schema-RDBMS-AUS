@@ -4,7 +4,7 @@ CREATE TABLE aus_session (
     created     TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     time_last   TIMESTAMP WITH TIME ZONE NULL,
     user_id     INT NULL,
-    a_session   BYTEA NULL,
+    a_session   TEXT NULL,
     
     FOREIGN KEY (user_id)
         REFERENCES  aus_user (id)
